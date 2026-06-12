@@ -1,3 +1,51 @@
+// PASSWORD PROTECTION
+const PASSWORD = 'family'; // Change this to your desired password
+const passwordModal = document.getElementById('password-modal');
+const mainContent = document.getElementById('main-content');
+const passwordInput = document.getElementById('password-input');
+const passwordSubmit = document.getElementById('password-submit');
+const passwordError = document.getElementById('password-error');
+
+// Check if user already entered password this session
+function checkPasswordSession() {
+    if (!sessionStorage.getItem('gallery_unlocked')) {
+        mainContent.classList.add('hidden');
+        passwordModal.classList.remove('hidden');
+    } else {
+        mainContent.classList.remove('hidden');
+        passwordModal.classList.add('hidden');
+    }
+}
+
+// Handle password submission
+function handlePasswordSubmit() {
+    const input = passwordInput.value.trim();
+    if (input === PASSWORD) {
+        sessionStorage.setItem('gallery_unlocked', 'true');
+        passwordError.textContent = '';
+        passwordInput.value = '';
+        mainContent.classList.remove('hidden');
+        passwordModal.classList.add('hidden');
+    } else {
+        passwordError.textContent = 'Incorrect password. Please try again.';
+        passwordInput.value = '';
+        passwordInput.focus();
+    }
+}
+
+passwordSubmit.addEventListener('click', handlePasswordSubmit);
+passwordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        handlePasswordSubmit();
+    }
+});
+
+// Initialize password check on page load
+window.addEventListener('load', () => {
+    checkPasswordSession();
+    passwordInput.focus();
+});
+
 // Set dynamic footer year
 document.getElementById('year').textContent = new Date().getFullYear();
 
