@@ -22,6 +22,96 @@ body {
     padding: 0 2rem;
 }
 
+/* Password Modal */
+.password-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.password-modal.hidden {
+    display: none;
+}
+
+.password-modal-content {
+    background: #1C2526;
+    padding: 2.5rem;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.password-modal-content h2 {
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: #E0E0E0;
+}
+
+.password-modal-content p {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    color: #B0B0B0;
+}
+
+.password-input {
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #4A90E2;
+    border-radius: 4px;
+    background-color: #0A0E0F;
+    color: #E0E0E0;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.password-input:focus {
+    outline: none;
+    border-color: #357ABD;
+    box-shadow: 0 0 8px rgba(74, 144, 226, 0.3);
+}
+
+.password-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #4A90E2;
+    color: #E0E0E0;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.password-button:hover {
+    background-color: #357ABD;
+}
+
+.password-button:active {
+    transform: scale(0.98);
+}
+
+.password-error {
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+    min-height: 1.2rem;
+}
+
+.main-content.hidden {
+    display: none;
+}
+
 /* Navigation */
 nav {
     background-color: #1C2526;
@@ -155,6 +245,8 @@ nav a:hover {
     align-items: center;
     width: 100%;
     margin-bottom: 1rem;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 .gallery {
@@ -186,6 +278,28 @@ nav a:hover {
 
 .gallery-image-container img:hover {
     opacity: 0.8;
+}
+
+/* Download All Button */
+.download-all-button {
+    background-color: #4A90E2;
+    color: #E0E0E0;
+    border: none;
+    border-radius: 4px;
+    padding: 0.65rem 1.25rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background-color 0.3s;
+    white-space: nowrap;
+}
+
+.download-all-button:hover {
+    background-color: #357ABD;
+}
+
+.download-all-button:active {
+    transform: scale(0.98);
 }
 
 /* About and Contact */
@@ -447,7 +561,7 @@ footer {
 
     .gallery-header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
         gap: 0.5rem;
     }
 
@@ -492,6 +606,11 @@ footer {
     #clear-filters {
         padding: 0.4rem 0.8rem;
         font-size: 0.8rem;
+    }
+
+    .download-all-button {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
     }
 
     .lightbox-content {
@@ -604,6 +723,11 @@ footer {
         font-size: 0.7rem;
     }
 
+    .download-all-button {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.75rem;
+    }
+
     .lightbox-content {
         max-width: 100vw;
         max-height: 100vh;
@@ -648,8 +772,7 @@ footer {
         top: 10px;
         right: 45px;
         font-size: 0.7rem;
-        padding: 5px;
-    8px;
+        padding: 5px 8px;
     }
 
     .modal-content {
