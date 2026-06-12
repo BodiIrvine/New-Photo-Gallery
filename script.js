@@ -206,7 +206,7 @@ const albums = {
             { 
                 src: 'images/Disney Magic (March, 2025)/family(2).jpeg', 
                 thumb: 'images/Disney Magic (March, 2025)/family(2).jpeg', 
-                caption: 'Big family photo at the "Sail-a-wave Party"', 
+                caption: 'Big family photo at the Sail-a-wave Party', 
                 tags: ['Family Photo', 'cruise'] 
             },
             { 
@@ -218,19 +218,19 @@ const albums = {
             { 
                 src: 'images/Disney Magic (March, 2025)/family.jpeg', 
                 thumb: 'images/Disney Magic (March, 2025)/family.jpeg', 
-                caption: 'Small family photo at the "Sail-a-wave Party"', 
+                caption: 'Small family photo at the Sail-a-wave Party', 
                 tags: ['Family Photo', 'cruise'] 
             },
             { 
                 src: 'images/Disney Magic (March, 2025)/family(1).jpeg', 
                 thumb: 'images/Disney Magic (March, 2025)/family(1).jpeg', 
-                caption: 'Small family photo at the "Sail-a-wave Party"', 
+                caption: 'Small family photo at the Sail-a-wave Party', 
                 tags: ['Family Photo', 'cruise'] 
             },
             { 
                 src: 'images/Disney Magic (March, 2025)/family(3).jpeg', 
                 thumb: 'images/Disney Magic (March, 2025)/family(3).jpeg', 
-                caption: 'Small family photo at the "Sail-a-wave Party"', 
+                caption: 'Small family photo at the Sail-a-wave Party', 
                 tags: ['Family Photo', 'cruise'] 
             },
             { 
@@ -570,158 +570,101 @@ const albums = {
                 tags: ['Staff', 'cruise'] 
             }
         ]
-    }
+    },
 };
 
-// Set random hero image
-function setRandomHeroImage() {
-    const allPhotos = Object.values(albums).flatMap(album => album.photos);
-    const randomIndex = Math.floor(Math.random() * allPhotos.length);
-    const randomPhoto = allPhotos[randomIndex];
-    const heroImage = document.getElementById('hero-image');
-    heroImage.src = randomPhoto.src;
-    heroImage.alt = randomPhoto.caption;
-}
-
-// Call on page load
-setRandomHeroImage();
-
-// Keep track of selected tags, lightbox state, and current album
+// Global variables
 let selectedTags = [];
 let currentPhotos = [];
 let currentIndex = 0;
 let currentAlbumId = null;
 
-// Download modal handling
-const downloadModal = document.getElementById('download-modal');
-const modalClose = downloadModal.querySelector('.modal-close');
-const formatButtons = downloadModal.querySelectorAll('.format-button');
-const lightboxDownloadButton = document.getElementById('lightbox-download-button');
-
-lightboxDownloadButton.addEventListener('click', () => {
-    downloadModal.style.display = 'block';
-});
-
-modalClose.addEventListener('click', () => {
-    downloadModal.style.display = 'none';
-});
-
-downloadModal.addEventListener('click', (e) => {
-    if (e.target === downloadModal) {
-        downloadModal.style.display = 'none';
-    }
-});
-
-formatButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        const format = button.dataset.format;
-        handleLightboxDownload(format);
-        downloadModal.style.display = 'none';
-    });
-});
-
-async function handleLightboxDownload(format) {
-    const photo = currentPhotos[currentIndex];
-    if (!photo) {
-        alert('No image selected.');
-        return;
-    }
-
-    if (format === 'jpeg') {
-        const link = document.createElement('a');
-        link.href = photo.src;
-        link.download = photo.src.split('/').pop();
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } else if (format === 'pdf') {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.width;
-
-        try {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.src = photo.src;
-            await new Promise((resolve, reject) => {
-                img.onload = resolve;
-                img.onerror = reject;
-            });
-
-            const imgProps = doc.getImageProperties(img);
-            const imgWidth = 180;
-            const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
-
-            doc.setFontSize(16);
-            doc.text(photo.caption, pageWidth / 2, 10, { align: 'center' });
-            doc.addImage(img, 'JPEG', (pageWidth - imgWidth) / 2, 20, imgWidth, imgHeight);
-            doc.save(`${photo.caption || 'image'}.pdf`);
-        } catch (e) {
-            console.error('Error loading image:', photo.src, e);
-            alert('Failed to generate PDF. Please try again.');
-        }
-    }
-}
-
-// Page navigation
+// Navigation
 const navLinks = document.querySelectorAll('.nav-link');
 const pages = document.querySelectorAll('.page');
-
-function switchPage(targetId) {
-    pages.forEach(page => page.classList.remove('active'));
-    const targetPage = document.getElementById(targetId);
-    if (targetPage) {
-        targetPage.classList.add('active');
-        navLinks.forEach(link => {
-            if (link.getAttribute('href').substring(1) === targetId) {
-                link.setAttribute('aria-current', 'page');
-            } else {
-                link.removeAttribute('aria-current');
-            }
-        });
-    }
-}
 
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
-        switchPage(link.getAttribute('href').substring(1));
+        const pageId = link.getAttribute('href').substring(1);
+        switchPage(pageId);
     });
 });
 
-// Render albums dynamically
-function renderAlbums(container, albums) {
-    container.innerHTML = '';
-    Object.keys(albums).forEach(albumId => {
+function switchPage(pageId) {
+    pages.forEach(page => page.classList.remove('active'));
+    const targetPage = document.getElementById(pageId);
+    if (targetPage) {
+        targetPage.classList.add('active');
+    }
+
+    if (pageId === 'home') {
+        renderHomeAlbums();
+    } else if (pageId === 'albums') {
+        renderAlbumsPage();
+    }
+}
+
+// Render albums on home page
+function renderHomeAlbums() {
+    const grid = document.getElementById('home-albums-grid');
+    grid.innerHTML = '';
+
+    Object.keys(albums).slice(0, 3).forEach(albumId => {
+        const album = albums[albumId];
+        const firstPhoto = album.photos[0];
+
         const card = document.createElement('div');
         card.className = 'album-card';
-        card.dataset.album = albumId;
         card.innerHTML = `
-            <img src="${albums[albumId].photos[0].thumb}" alt="Cover for ${albumId} album">
-            <div class="album-title">${albumId.charAt(0).toUpperCase() + albumId.slice(1)} Album</div>
+            <img src="${firstPhoto.thumb}" alt="${albumId}">
+            <div class="album-title">${albumId}</div>
         `;
-        container.appendChild(card);
-        card.addEventListener('click', () => showGallery(albumId));
+        card.addEventListener('click', () => {
+            openAlbum(albumId);
+            switchPage('gallery');
+        });
+        grid.appendChild(card);
+    });
+
+    // Set random hero image
+    if (albums['Disney Magic (March, 2025)'].photos.length > 0) {
+        const randomIndex = Math.floor(Math.random() * albums['Disney Magic (March, 2025)'].photos.length);
+        const heroImage = document.getElementById('hero-image');
+        heroImage.src = albums['Disney Magic (March, 2025)'].photos[randomIndex].src;
+    }
+}
+
+// Render all albums on albums page
+function renderAlbumsPage() {
+    const grid = document.getElementById('albums-page-grid');
+    grid.innerHTML = '';
+
+    Object.keys(albums).forEach(albumId => {
+        const album = albums[albumId];
+        const firstPhoto = album.photos[0];
+
+        const card = document.createElement('div');
+        card.className = 'album-card';
+        card.innerHTML = `
+            <img src="${firstPhoto.thumb}" alt="${albumId}">
+            <div class="album-title">${albumId}</div>
+        `;
+        card.addEventListener('click', () => {
+            openAlbum(albumId);
+            switchPage('gallery');
+        });
+        grid.appendChild(card);
     });
 }
 
-// Render albums on page load
-renderAlbums(document.getElementById('home-albums-grid'), albums);
-renderAlbums(document.getElementById('albums-page-grid'), albums);
-
-// Show gallery for selected album
-function showGallery(albumId) {
+// Open album
+function openAlbum(albumId) {
     currentAlbumId = albumId;
-    if (!albums[albumId]) {
-        const gallery = document.getElementById('photo-gallery');
-        gallery.innerHTML = '<p>Sorry, this album was not found.</p>';
-        switchPage('gallery');
-        return;
-    }
-    switchPage('gallery');
-    const galleryTitle = document.getElementById('gallery-title');
-    galleryTitle.textContent = albumId.charAt(0).toUpperCase() + albumId.slice(1) + ' Album';
+    selectedTags = [];
     const gallery = document.getElementById('photo-gallery');
+    const title = document.getElementById('gallery-title');
+    title.textContent = albumId;
     gallery.innerHTML = '<p>Loading...</p>';
 
     // Populate album info
@@ -845,6 +788,7 @@ const lightboxCaption = document.querySelector('.lightbox-caption');
 const lightboxClose = document.querySelector('.lightbox-close');
 const lightboxPrev = document.querySelector('.lightbox-prev');
 const lightboxNext = document.querySelector('.lightbox-next');
+const lightboxDownloadButton = document.getElementById('lightbox-download-button');
 
 function openLightbox(index) {
     currentIndex = index;
@@ -909,3 +853,130 @@ document.addEventListener('keydown', (e) => {
         }
     }
 });
+
+// DOWNLOAD FUNCTIONALITY
+const downloadModal = document.getElementById('download-modal');
+const modalClose = document.querySelector('.modal-close');
+const formatButtons = document.querySelectorAll('.format-button');
+const downloadAllButton = document.getElementById('download-all-button');
+
+// Close modal
+modalClose.addEventListener('click', () => {
+    downloadModal.style.display = 'none';
+});
+
+downloadModal.addEventListener('click', (e) => {
+    if (e.target === downloadModal) {
+        downloadModal.style.display = 'none';
+    }
+});
+
+// Handle single photo download
+lightboxDownloadButton.addEventListener('click', () => {
+    downloadModal.style.display = 'flex';
+});
+
+// Handle format selection for single photo
+formatButtons.forEach(button => {
+    button.addEventListener('click', async () => {
+        const format = button.dataset.format;
+        const photo = currentPhotos[currentIndex];
+        downloadModal.style.display = 'none';
+        
+        if (format === 'jpeg') {
+            downloadImage(photo.src, photo.caption);
+        } else if (format === 'pdf') {
+            downloadImageAsPDF(photo.src, photo.caption);
+        }
+    });
+});
+
+// Download single image as JPEG
+function downloadImage(src, filename) {
+    const link = document.createElement('a');
+    link.href = src;
+    link.download = `${filename.replace(/\s+/g, '_') || 'photo'}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Download single image as PDF
+async function downloadImageAsPDF(src, filename) {
+    try {
+        const response = await fetch(src);
+        const blob = await response.blob();
+        const img = new Image();
+        img.onload = () => {
+            const pdf = new window.jsPDF.jsPDF({
+                orientation: img.width > img.height ? 'landscape' : 'portrait',
+                unit: 'mm',
+                format: [img.width, img.height]
+            });
+            
+            const reader = new FileReader();
+            reader.onload = () => {
+                pdf.addImage(reader.result, 'JPEG', 0, 0, img.width, img.height);
+                pdf.save(`${filename.replace(/\s+/g, '_') || 'photo'}.pdf`);
+            };
+            reader.readAsDataURL(blob);
+        };
+        img.src = URL.createObjectURL(blob);
+    } catch (error) {
+        console.error('Error downloading PDF:', error);
+        alert('Error downloading PDF. Please try again.');
+    }
+}
+
+// Download all photos in current album as ZIP
+downloadAllButton.addEventListener('click', async () => {
+    if (!currentAlbumId || currentPhotos.length === 0) {
+        alert('No photos to download.');
+        return;
+    }
+
+    downloadAllButton.disabled = true;
+    downloadAllButton.textContent = '⬇ Downloading...';
+
+    try {
+        const zip = new JSZip();
+        
+        for (let i = 0; i < currentPhotos.length; i++) {
+            const photo = currentPhotos[i];
+            const photoName = photo.caption.replace(/\s+/g, '_') || `photo_${i + 1}`;
+            
+            try {
+                const response = await fetch(photo.src);
+                const blob = await response.blob();
+                
+                // Get file extension from src or use jpg as default
+                const ext = photo.src.split('.').pop().toLowerCase();
+                const validExts = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                const fileExt = validExts.includes(ext) ? ext : 'jpg';
+                
+                zip.file(`${photoName}.${fileExt}`, blob);
+            } catch (error) {
+                console.error(`Error fetching photo ${i + 1}:`, error);
+            }
+        }
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(zipBlob);
+        link.download = `${currentAlbumId.replace(/\s+/g, '_')}_photos.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+
+    } catch (error) {
+        console.error('Error creating ZIP file:', error);
+        alert('Error downloading photos. Please try again.');
+    } finally {
+        downloadAllButton.disabled = false;
+        downloadAllButton.textContent = '⬇ Download All';
+    }
+});
+
+// Initialize
+renderHomeAlbums();
