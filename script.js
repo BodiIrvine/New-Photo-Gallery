@@ -5,7 +5,7 @@ const mainContent = document.getElementById('main-content');
 const passwordInput = document.getElementById('password-input');
 const passwordSubmit = document.getElementById('password-submit');
 const passwordError = document.getElementById('password-error');
-
+ 
 // Check if user already entered password this session
 function checkPasswordSession() {
     if (!sessionStorage.getItem('gallery_unlocked')) {
@@ -16,7 +16,7 @@ function checkPasswordSession() {
         passwordModal.classList.add('hidden');
     }
 }
-
+ 
 // Handle password submission
 function handlePasswordSubmit() {
     const input = passwordInput.value.trim();
@@ -32,18 +32,12 @@ function handlePasswordSubmit() {
         passwordInput.focus();
     }
 }
-
+ 
 passwordSubmit.addEventListener('click', handlePasswordSubmit);
 passwordInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         handlePasswordSubmit();
     }
-});
-
-// Initialize password check on page load
-window.addEventListener('load', () => {
-    checkPasswordSession();
-    passwordInput.focus();
 });
 
 // Set dynamic footer year
