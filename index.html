@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irvine Family Vacation Photo Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+    <!-- Password Protection Modal -->
+    <div id="password-modal" class="password-modal">
+        <div class="password-modal-content">
+            <h2>Photo Gallery Access</h2>
+            <p>Please enter the password to view the photo gallery.</p>
+            <input 
+                type="password" 
+                id="password-input" 
+                placeholder="Enter password" 
+                class="password-input"
+            >
+            <button id="password-submit" class="password-button">Submit</button>
+            <p id="password-error" class="password-error"></p>
+        </div>
+    </div>
+
+    <div id="main-content" class="main-content hidden">
+        <nav>
+            <div class="container">
+                <ul>
+                    <li><a href="#home" class="nav-link" aria-current="page">Home</a></li>
+                    <li><a href="#albums" class="nav-link">Albums</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <section id="home" class="page active">
+            <div class="hero">
+                <img id="hero-image" src="" alt="Random Vacation Photo" class="hero-image">
+                <div class="hero-content">
+                    <h1>Our Vacation Adventures</h1>
+                    <p>Capturing moments from our unforgettable vacations.</p>
+                </div>
+            </div>
+            <div class="container">
+                <h2>Albums</h2>
+                <div id="home-albums-grid" class="albums-grid"></div>
+            </div>
+        </section>
+
+        <section id="albums" class="page">
+            <div class="container">
+                <h2>All Albums</h2>
+                <div id="albums-page-grid" class="albums-grid"></div>
+            </div>
+        </section>
+
+        <section id="gallery" class="page">
+            <div class="full-width-container">
+                <div class="center-wrapper">
+                    <div class="gallery-header">
+                        <h2 id="gallery-title"></h2>
+                        <button id="download-all-button" class="download-all-button">⬇ Download All</button>
+                    </div>
+                    <div id="album-info" class="album-info"></div>
+                    <div class="filter-container">
+                        <h3>Filter by Tags</h3>
+                        <div id="tag-filters"></div>
+                        <button id="clear-filters">Clear Filters</button>
+                    </div>
+                    <div id="photo-gallery" class="gallery"></div>
+                </div>
+            </div>
+        </section>
+
+        <div id="custom-lightbox" class="lightbox">
+            <div class="lightbox-content">
+                <img id="lightbox-image" src="" alt="">
+                <div class="lightbox-caption"></div>
+            </div>
+            <button class="lightbox-close">X</button>
+            <button class="lightbox-prev">❮</button>
+            <button class="lightbox-next">❯</button>
+            <button id="lightbox-download-button" class="lightbox-download-button">Download</button>
+        </div>
+
+        <div id="download-modal" class="modal">
+            <div class="modal-content">
+                <span class="modal-close">×</span>
+                <h2>Download Image</h2>
+                <p>Select a file format:</p>
+                <button class="format-button" data-format="jpeg">JPEG</button>
+                <button class="format-button" data-format="pdf">PDF</button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="container">
+                <p>© <span id="year"></span> Irvine Family Vacation Photo Gallery</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
